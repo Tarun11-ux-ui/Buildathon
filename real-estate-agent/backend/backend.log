@@ -1,0 +1,78 @@
+
+> backend@1.0.0 start
+> node server.js
+
+◇ injected env (0) from .env // tip: ⌁ auth for agents [www.vestauth.com]
+◇ injected env (1) from ..\..\.env // tip: ⌘ enable debugging { debug: true }
+Server running on 5000
+Anakin task created {
+  request: {
+    action_id: 'zl_search_listings',
+    params: { region_id: '10221', region_type: 7, status: 'ForSale' }
+  },
+  status: 202,
+  body: {
+    status: 'processing',
+    job_id: 'fa118b05-47b3-469a-9513-574d3a950414',
+    poll_url: '/v1/wire/jobs/fa118b05-47b3-469a-9513-574d3a950414'
+  }
+}
+Anakin poll attempt 1/300 - status=200 retry_after_ms=2000 {
+  pollUrl: 'https://api.anakin.io/v1/wire/jobs/fa118b05-47b3-469a-9513-574d3a950414',
+  body: { retry_after_ms: 2000, status: 'processing' }
+}
+Anakin poll attempt 2/300 - status=200 retry_after_ms=2000 {
+  pollUrl: 'https://api.anakin.io/v1/wire/jobs/fa118b05-47b3-469a-9513-574d3a950414',
+  body: { retry_after_ms: 2000, status: 'processing' }
+}
+Anakin poll attempt 3/300 - status=200 retry_after_ms=2000 {
+  pollUrl: 'https://api.anakin.io/v1/wire/jobs/fa118b05-47b3-469a-9513-574d3a950414',
+  body: {
+    credits_used: 3,
+    data: {
+      status: 'ok',
+      data: [Object],
+      files: [],
+      error: null,
+      meta: [Object]
+    },
+    execution_ms: 3678,
+    status: 'completed'
+  }
+}
+Anakin task created {
+  request: {
+    action_id: 'zl_search_listings',
+    params: { region_id: '10221', region_type: 7, status: 'ForSale' }
+  },
+  status: 202,
+  body: {
+    status: 'processing',
+    job_id: 'e86aec50-142e-4cec-917f-557a1b72249e',
+    poll_url: '/v1/wire/jobs/e86aec50-142e-4cec-917f-557a1b72249e'
+  }
+}
+Anakin poll attempt 1/300 - status=200 retry_after_ms=2000 {
+  pollUrl: 'https://api.anakin.io/v1/wire/jobs/e86aec50-142e-4cec-917f-557a1b72249e',
+  body: { retry_after_ms: 2000, status: 'processing' }
+}
+Anakin poll attempt 2/300 - status=200 retry_after_ms=2000 {
+  pollUrl: 'https://api.anakin.io/v1/wire/jobs/e86aec50-142e-4cec-917f-557a1b72249e',
+  body: { retry_after_ms: 2000, status: 'processing' }
+}
+Anakin poll attempt 3/300 - status=200 retry_after_ms=2000 {
+  pollUrl: 'https://api.anakin.io/v1/wire/jobs/e86aec50-142e-4cec-917f-557a1b72249e',
+  body: {
+    credits_used: 3,
+    data: {
+      status: 'ok',
+      data: [Object],
+      files: [],
+      error: null,
+      meta: [Object]
+    },
+    execution_ms: 3129,
+    status: 'completed'
+  }
+}
+Returning cached Anakin result for {"regionId":"10221","status":"ForSale"}
