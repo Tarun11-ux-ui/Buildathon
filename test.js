@@ -1,4 +1,8 @@
 require("dotenv").config();
+const express = require("express");
+
+const app = express();
+app.use(express.json());
 
 const API_KEY = process.env.ANAKIN_API_KEY;
 const BASE_URL = "https://api.anakin.io";
@@ -43,53 +47,64 @@ async function pollJob(pollUrl) {
 
     const result = await response.json();
 
+    if (result.status === "completed") return result;
+    if (result.status === "failed") throw new Error(JSON.stringify(result));
+
     console.log("Status:", result.status);
-
-    if (result.status === "completed") {
-      return result;
-    }
-
-    if (result.status === "failed") {
-      throw new Error(JSON.stringify(result, null, 2));
-    }
   }
 }
-
-async function main() {
+app.get("/run", async (req, res) => {
   try {
     if (!API_KEY) {
-      console.log("ANAKIN_API_KEY not found in .env");
-      return;
+      return res.status(400).json({ error: "Missing API key" });
     }
-
-    console.log("Creating Zillow listings job...");
 
     const job = await createListingsJob();
 
-    console.log("Job Response:");
-
-    console.log(JSON.stringify(job, null, 2));
-
     if (!job.poll_url) {
-      console.log("No poll_url returned.");
-
-      console.log("Request probably failed.");
-
-      return;
+      return res.status(500).json({ error: "No poll_url returned", job });
     }
 
-    console.log("\nPolling job...\n");
+    const result = await pollJob(job.poll_url);
 
-    const finalResult = await pollJob(job.poll_url);
-
-    console.log("\n=== FINAL RESULT ===\n");
-
-    console.log(JSON.stringify(finalResult, null, 2));
-  } catch (error) {
-    console.error("\nERROR:\n");
-
-    console.error(error);
+    res.json({
+      success: true,
+      data: result,
+    });
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      error: err.message,
+    });
   }
-}
+});
+app.get("/run", async (req, res) => {
+  try {
+    if (!API_KEY) {
+      return res.status(400).json({ error: "Missing API key" });
+    }
 
-main();
+    const job = await createListingsJob();
+
+    if (!job.poll_url) {
+      return res.status(500).json({ error: "No poll_url returned", job });
+    }
+
+    const result = await pollJob(job.poll_url);
+
+    res.json({
+      success: true,
+      data: result,
+    });
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      error: err.message,
+    });
+  }
+});
+const PORT = process.env.PORT || 5000;
+
+app.listen(PORT, () => {
+  console.log("Server running on port", PORT);
+});
