@@ -7,6 +7,16 @@ app.use(express.json());
 const API_KEY = process.env.ANAKIN_API_KEY;
 const BASE_URL = "https://api.anakin.io";
 
+/* ---------------- ROOT ROUTE ---------------- */
+app.get("/", (req, res) => {
+  res.json({
+    status: "running",
+    message: "API is live",
+    endpoint: "/run",
+  });
+});
+
+/* ---------------- HELPERS ---------------- */
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
@@ -47,22 +57,32 @@ async function pollJob(pollUrl) {
 
     const result = await response.json();
 
-    if (result.status === "completed") return result;
-    if (result.status === "failed") throw new Error(JSON.stringify(result));
-
     console.log("Status:", result.status);
+
+    if (result.status === "completed") return result;
+
+    if (result.status === "failed") {
+      throw new Error(JSON.stringify(result, null, 2));
+    }
   }
 }
+
+/* ---------------- API ROUTE ---------------- */
 app.get("/run", async (req, res) => {
   try {
     if (!API_KEY) {
-      return res.status(400).json({ error: "Missing API key" });
+      return res.status(400).json({
+        error: "Missing ANAKIN_API_KEY in environment variables",
+      });
     }
 
     const job = await createListingsJob();
 
     if (!job.poll_url) {
-      return res.status(500).json({ error: "No poll_url returned", job });
+      return res.status(500).json({
+        error: "No poll_url returned",
+        job,
+      });
     }
 
     const result = await pollJob(job.poll_url);
@@ -72,37 +92,16 @@ app.get("/run", async (req, res) => {
       data: result,
     });
   } catch (err) {
+    console.error(err);
+
     res.status(500).json({
       success: false,
       error: err.message,
     });
   }
 });
-app.get("/run", async (req, res) => {
-  try {
-    if (!API_KEY) {
-      return res.status(400).json({ error: "Missing API key" });
-    }
 
-    const job = await createListingsJob();
-
-    if (!job.poll_url) {
-      return res.status(500).json({ error: "No poll_url returned", job });
-    }
-
-    const result = await pollJob(job.poll_url);
-
-    res.json({
-      success: true,
-      data: result,
-    });
-  } catch (err) {
-    res.status(500).json({
-      success: false,
-      error: err.message,
-    });
-  }
-});
+/* ---------------- START SERVER ---------------- */
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
