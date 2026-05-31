@@ -19,7 +19,7 @@ export async function getProperties(options = {}) {
     if (beds) params.set("beds", beds);
     if (baths) params.set("baths", baths);
 
-    const url = `http://localhost:5000/api/properties?${params.toString()}`;
+    const url = `https://rea-61xe.onrender.com{params.toString()}`;
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 15 * 60 * 1000);
 
@@ -48,7 +48,7 @@ export async function getProperties(options = {}) {
     }
     if (error instanceof TypeError) {
       throw new Error(
-        `Connection error: Cannot reach backend at http://localhost:5000. Make sure the backend server is running.`,
+        `Connection error: Cannot reach backend at https://rea-61xe.onrender.com. Make sure the backend server is running.`,
       );
     }
     throw error;
